@@ -5,6 +5,7 @@ import android.view.KeyEvent;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class RemoteKeyPolicyTest {
@@ -42,5 +43,15 @@ public class RemoteKeyPolicyTest {
                 KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER, 2));
         assertFalse(RemoteKeyPolicy.shouldHandleConfirmLongPress(
                 KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DPAD_CENTER, 1));
+    }
+
+    @Test
+    public void verticalUploadNavigationTargetsAdjacentRowsOnly() {
+        assertEquals(1, RemoteKeyPolicy.nextUploadPosition(0, KeyEvent.KEYCODE_DPAD_DOWN, 3));
+        assertEquals(2, RemoteKeyPolicy.nextUploadPosition(1, KeyEvent.KEYCODE_DPAD_DOWN, 3));
+        assertEquals(0, RemoteKeyPolicy.nextUploadPosition(1, KeyEvent.KEYCODE_DPAD_UP, 3));
+        assertEquals(-1, RemoteKeyPolicy.nextUploadPosition(0, KeyEvent.KEYCODE_DPAD_UP, 3));
+        assertEquals(-1, RemoteKeyPolicy.nextUploadPosition(2, KeyEvent.KEYCODE_DPAD_DOWN, 3));
+        assertEquals(-1, RemoteKeyPolicy.nextUploadPosition(1, KeyEvent.KEYCODE_DPAD_LEFT, 3));
     }
 }

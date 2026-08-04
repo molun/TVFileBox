@@ -71,7 +71,9 @@
         android:layout_height="0dp"
         android:layout_marginTop="4dp"
         android:layout_weight="1"
+        android:descendantFocusability="afterDescendants"
         android:divider="@android:color/transparent"
         android:dividerHeight="6dp"
+        android:focusable="false"
         android:listSelector="@android:color/transparent" />
 </LinearLayout>

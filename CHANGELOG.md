@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.2
+
+- The Remote Transfer screen now focuses the first Open/Install button when it opens, including on older TV firmware that delays window focus.
+- Upload action buttons are now placed directly in the remote-control focus chain; the first D-pad press also restores focus as a firmware fallback.
+- D-pad Up/Down now moves directly between the same action buttons on adjacent upload rows without stopping on a row outline.
+- Removed the upload row selection outline because upload rows are controlled through their action buttons.
+- Restored one-tap touchscreen Open/Install behavior while keeping automatic focus after uploads.
+
 ## 1.2.1
 
 - Removed the “Uploaded files” heading to give the upload list more room on small touchscreen speakers.

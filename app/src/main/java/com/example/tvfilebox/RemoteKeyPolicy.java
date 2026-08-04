@@ -27,4 +27,16 @@ final class RemoteKeyPolicy {
                 && action == KeyEvent.ACTION_DOWN
                 && repeatCount > 0;
     }
+
+    static int nextUploadPosition(int currentPosition, int keyCode, int itemCount) {
+        int target;
+        if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+            target = currentPosition + 1;
+        } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+            target = currentPosition - 1;
+        } else {
+            return -1;
+        }
+        return target >= 0 && target < itemCount ? target : -1;
+    }
 }

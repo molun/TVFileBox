@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="62dp"
-    android:background="@drawable/row_selector"
+    android:background="@color/panel"
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:paddingLeft="18dp"
@@ -34,13 +34,14 @@
     <Button
         android:id="@+id/upload_open"
         style="@style/ActionButton"
-        android:focusableInTouchMode="true"
+        android:focusable="true"
         android:nextFocusRight="@id/upload_delete"
         android:text="@string/open" />
 
     <Button
         android:id="@+id/upload_delete"
         style="@style/ActionButton"
+        android:focusable="true"
         android:nextFocusLeft="@id/upload_open"
         android:text="@string/delete" />
 </LinearLayout>
