@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TV 文件盒</string>
+    <string name="home">首页</string>
+    <string name="new_folder">新建文件夹</string>
+    <string name="remote_transfer">远程传输</string>
+    <string name="open">打开</string>
+    <string name="rename">重命名</string>
+    <string name="delete">删除</string>
+    <string name="empty_directory">此目录为空</string>
+</resources>
