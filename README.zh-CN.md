@@ -33,9 +33,9 @@ TVFileBox 是一款面向 Android 电视盒子的轻量文件管理与局域网�
 
 ## APK 选择
 
-- `TVFileBox-v1.2.0-armeabi-v7a.apk`：32 位 ARM 老电视盒子。
-- `TVFileBox-v1.2.0-arm64-v8a.apk`：64 位 ARM 设备。
-- `TVFileBox-v1.2.0-universal.apk`：适合一般安装的通用版本。
+- `TVFileBox-v1.2.1-armeabi-v7a.apk`：32 位 ARM 老电视盒子。
+- `TVFileBox-v1.2.1-arm64-v8a.apk`：64 位 ARM 设备。
+- `TVFileBox-v1.2.1-universal.apk`：适合一般安装的通用版本。
 
 TVFileBox 当前不包含原生 `.so` 库，因此按要求生成的三个 ABI 命名 APK 内容完全相同，均可在 ARMv7 和 ARM64 设备上运行。普通用户建议下载 universal 版本。
 

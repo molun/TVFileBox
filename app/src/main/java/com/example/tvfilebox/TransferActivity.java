@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -27,6 +28,7 @@ public class TransferActivity extends Activity implements UploadEntryAdapter.Lis
     private TextView pathView;
     private TextView statusView;
     private ImageView qrView;
+    private ListView listView;
     private UploadEntryAdapter adapter;
     private EmbeddedHttpServer server;
     private String token;
@@ -42,19 +44,19 @@ public class TransferActivity extends Activity implements UploadEntryAdapter.Lis
         pathView = (TextView) findViewById(R.id.text_upload_path);
         statusView = (TextView) findViewById(R.id.text_server_status);
         qrView = (ImageView) findViewById(R.id.image_qr);
-        ListView list = (ListView) findViewById(R.id.upload_list);
+        listView = (ListView) findViewById(R.id.upload_list);
 
         uploadDirectory = FileUtils.uploadDirectory(this);
         pathView.setText("文件保存完整路径：" + uploadDirectory.getAbsolutePath());
         adapter = new UploadEntryAdapter(this, FileUtils.listUploads(this), this);
-        list.setAdapter(adapter);
+        listView.setAdapter(adapter);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         startServer();
-        refreshFiles();
+        refreshFiles(false);
     }
 
     @Override
@@ -127,8 +129,30 @@ public class TransferActivity extends Activity implements UploadEntryAdapter.Lis
         return null;
     }
 
-    private void refreshFiles() {
+    private void refreshFiles(boolean focusNewestAction) {
         adapter.replace(FileUtils.listUploads(this));
+        if (!focusNewestAction || adapter.getCount() == 0) return;
+
+        // Newly uploaded files are sorted first. Scroll to that row, wait for
+        // ListView to lay it out, then focus its Open/Install button.
+        listView.setSelectionFromTop(0, 0);
+        listView.post(new Runnable() {
+            @Override
+            public void run() {
+                listView.setSelectionFromTop(0, 0);
+                listView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        View firstRow = listView.getChildAt(0);
+                        if (firstRow == null) return;
+                        View action = firstRow.findViewById(R.id.upload_open);
+                        if (action != null && !action.requestFocus()) {
+                            action.requestFocusFromTouch();
+                        }
+                    }
+                });
+            }
+        });
     }
 
     @Override
@@ -146,7 +170,7 @@ public class TransferActivity extends Activity implements UploadEntryAdapter.Lis
                         if (!FileUtils.deleteRecursively(file)) {
                             Toast.makeText(TransferActivity.this, "删除失败", Toast.LENGTH_LONG).show();
                         }
-                        refreshFiles();
+                        refreshFiles(false);
                     }
                 })
                 .setNegativeButton("取消", null)
@@ -156,7 +180,7 @@ public class TransferActivity extends Activity implements UploadEntryAdapter.Lis
     @Override
     public void onFilesChanged() {
         runOnUiThread(new Runnable() {
-            @Override public void run() { refreshFiles(); }
+            @Override public void run() { refreshFiles(true); }
         });
     }
 

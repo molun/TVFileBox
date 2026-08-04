@@ -65,20 +65,11 @@
             android:padding="8dp" />
     </LinearLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="已上传文件"
-        android:textColor="@color/text"
-        android:textSize="20sp"
-        android:textStyle="bold" />
-
     <ListView
         android:id="@+id/upload_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="4dp"
         android:layout_weight="1"
         android:divider="@android:color/transparent"
         android:dividerHeight="6dp"
