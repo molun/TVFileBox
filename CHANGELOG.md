@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.3
+
+- The app now initially focuses the Remote Transfer toolbar button instead of Home.
+- File rows only show their selected highlight while the file list actually owns focus, removing the duplicate-focus appearance at startup.
+
 ## 1.2.2
 
 - The Remote Transfer screen now focuses the first Open/Install button when it opens, including on older TV firmware that delays window focus.

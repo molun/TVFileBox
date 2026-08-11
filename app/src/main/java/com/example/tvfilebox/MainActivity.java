@@ -30,6 +30,7 @@ public class MainActivity extends Activity {
     private FileEntryAdapter adapter;
     private File initialDirectory;
     private File currentDirectory;
+    private View selectedRowView;
     private boolean confirmLongPressHandled;
 
     @Override
@@ -58,27 +59,36 @@ public class MainActivity extends Activity {
             }
         });
         listView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            private View previous;
-
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (previous != null && previous != view) previous.setSelected(false);
-                view.setSelected(true);
-                previous = view;
+                if (selectedRowView != null && selectedRowView != view) {
+                    selectedRowView.setSelected(false);
+                }
+                selectedRowView = view;
+                // AbsListView keeps a selected position even while a toolbar
+                // button has the real focus. Only draw the row highlight while
+                // the file list itself owns focus.
+                view.setSelected(listView.hasFocus());
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                if (previous != null) previous.setSelected(false);
-                previous = null;
+                if (selectedRowView != null) selectedRowView.setSelected(false);
+                selectedRowView = null;
             }
         });
         listView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus && listView.getSelectedItemPosition() == AdapterView.INVALID_POSITION
-                        && adapter.getCount() > 0) {
-                    listView.setSelection(0);
+                if (hasFocus) {
+                    if (listView.getSelectedItemPosition() == AdapterView.INVALID_POSITION
+                            && adapter.getCount() > 0) {
+                        listView.setSelection(0);
+                    } else if (selectedRowView != null) {
+                        selectedRowView.setSelected(true);
+                    }
+                } else if (selectedRowView != null) {
+                    selectedRowView.setSelected(false);
                 }
             }
         });
@@ -95,7 +105,7 @@ public class MainActivity extends Activity {
 
         requestStoragePermissionIfNeeded();
         refresh();
-        findViewById(R.id.button_home).requestFocus();
+        findViewById(R.id.button_transfer).requestFocus();
     }
 
     @Override
