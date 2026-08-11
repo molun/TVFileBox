@@ -4,6 +4,8 @@
 
 TVFileBox is a lightweight file manager and local Wi-Fi upload tool designed for Android TV boxes, including legacy devices running Android 4.0.
 
+The interface follows the Android system language. Chinese system locales use Simplified Chinese; all other locales use English. This also applies to the phone upload webpage.
+
 ## Features
 
 - Browse the device's default shared-storage directory with a TV remote or touchscreen.
@@ -33,9 +35,9 @@ All delete operations display a second confirmation dialog and are permanent.
 
 ## APK selection
 
-- `TVFileBox-v1.2.3-armeabi-v7a.apk`: 32-bit ARM TV boxes.
-- `TVFileBox-v1.2.3-arm64-v8a.apk`: 64-bit ARM devices.
-- `TVFileBox-v1.2.3-universal.apk`: universal build for general installation.
+- `TVFileBox-v1.2.4-armeabi-v7a.apk`: 32-bit ARM TV boxes.
+- `TVFileBox-v1.2.4-arm64-v8a.apk`: 64-bit ARM devices.
+- `TVFileBox-v1.2.4-universal.apk`: universal build for general installation.
 
 TVFileBox currently contains no native `.so` libraries, so the three requested ABI-labeled APKs are byte-identical and compatible with both ARMv7 and ARM64. The universal file is recommended for most users.
 

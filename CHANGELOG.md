@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.4
+
+- Added complete English UI resources while retaining the Simplified Chinese interface.
+- The app now follows the Android system language: Chinese locales use Chinese, and every non-Chinese locale falls back to English.
+- Localized the file browser, dialogs, status messages, upload history actions, and the phone upload webpage.
+
 ## 1.2.3
 
 - The app now initially focuses the Remote Transfer toolbar button instead of Home.

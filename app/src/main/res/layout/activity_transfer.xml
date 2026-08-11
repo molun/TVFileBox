@@ -24,7 +24,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="手机上传文件到电视"
+                android:text="@string/transfer_heading"
                 android:textColor="@color/text"
                 android:textSize="28sp"
                 android:textStyle="bold" />
@@ -61,7 +61,7 @@
             android:layout_width="158dp"
             android:layout_height="158dp"
             android:background="#FFFFFF"
-            android:contentDescription="上传地址二维码"
+            android:contentDescription="@string/upload_qr_description"
             android:padding="8dp" />
     </LinearLayout>
 

@@ -63,7 +63,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="设置键：对当前文件重命名或永久删除"
+        android:text="@string/settings_key_hint"
         android:textColor="@color/muted"
         android:textSize="14sp" />
 </LinearLayout>

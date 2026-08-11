@@ -130,7 +130,7 @@ public class MainActivity extends Activity {
         if (requestCode == STORAGE_PERMISSION_REQUEST) {
             refresh();
             if (grantResults.length == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "未授予存储权限，只能访问应用自己的上传目录", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.storage_permission_denied, Toast.LENGTH_LONG).show();
                 openDirectory(FileUtils.uploadDirectory(this));
             }
         }
@@ -140,7 +140,7 @@ public class MainActivity extends Activity {
         if (currentDirectory == null || !currentDirectory.exists() || !currentDirectory.canRead()) {
             currentDirectory = FileUtils.uploadDirectory(this);
         }
-        pathView.setText("当前路径：" + currentDirectory.getAbsolutePath());
+        pathView.setText(getString(R.string.current_path, currentDirectory.getAbsolutePath()));
         adapter.replace(FileUtils.listFiles(currentDirectory));
     }
 
@@ -150,40 +150,40 @@ public class MainActivity extends Activity {
             refresh();
             listView.setSelection(0);
         } else {
-            Toast.makeText(this, "无法访问此目录", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.cannot_access_directory, Toast.LENGTH_SHORT).show();
         }
     }
 
     private void navigateParent() {
         File parent = currentDirectory == null ? null : currentDirectory.getParentFile();
         if (parent != null && parent.canRead()) openDirectory(parent);
-        else Toast.makeText(this, "已经到达最上级目录", Toast.LENGTH_SHORT).show();
+        else Toast.makeText(this, R.string.top_directory_reached, Toast.LENGTH_SHORT).show();
     }
 
     private void showCreateFolderDialog() {
         final EditText input = new EditText(this);
         input.setSingleLine(true);
-        input.setHint("文件夹名称");
+        input.setHint(R.string.folder_name_hint);
         AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle("新建文件夹")
+                .setTitle(R.string.new_folder)
                 .setView(input)
-                .setPositiveButton("创建", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.create, new DialogInterface.OnClickListener() {
                     @Override public void onClick(DialogInterface dialog, int which) {
                         String name = input.getText().toString().trim();
                         if (!isSimpleName(name)) {
-                            Toast.makeText(MainActivity.this, "名称不能为空，也不能包含路径分隔符", Toast.LENGTH_LONG).show();
+                            Toast.makeText(MainActivity.this, R.string.invalid_simple_name, Toast.LENGTH_LONG).show();
                             return;
                         }
                         File folder = new File(currentDirectory, name);
                         if (folder.exists()) {
-                            Toast.makeText(MainActivity.this, "同名文件或文件夹已经存在", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, R.string.file_or_folder_exists, Toast.LENGTH_SHORT).show();
                         } else if (!folder.mkdir()) {
-                            Toast.makeText(MainActivity.this, "创建失败，目录可能不可写", Toast.LENGTH_LONG).show();
+                            Toast.makeText(MainActivity.this, R.string.create_folder_failed, Toast.LENGTH_LONG).show();
                         }
                         refresh();
                     }
                 })
-                .setNegativeButton("取消", null)
+                .setNegativeButton(R.string.cancel, null)
                 .create();
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override public void onShow(DialogInterface dialog) {
@@ -205,25 +205,25 @@ public class MainActivity extends Activity {
         input.setText(file.getName());
         input.setSelection(input.getText().length());
         AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle("重命名")
+                .setTitle(R.string.rename)
                 .setView(input)
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                     @Override public void onClick(DialogInterface dialog, int which) {
                         String name = input.getText().toString().trim();
                         if (!isSimpleName(name)) {
-                            Toast.makeText(MainActivity.this, "名称无效", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, R.string.invalid_name, Toast.LENGTH_SHORT).show();
                             return;
                         }
                         File destination = new File(file.getParentFile(), name);
                         if (destination.exists()) {
-                            Toast.makeText(MainActivity.this, "同名文件已经存在", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, R.string.file_exists, Toast.LENGTH_SHORT).show();
                         } else if (!file.renameTo(destination)) {
-                            Toast.makeText(MainActivity.this, "重命名失败", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, R.string.rename_failed, Toast.LENGTH_SHORT).show();
                         }
                         refresh();
                     }
                 })
-                .setNegativeButton("取消", null)
+                .setNegativeButton(R.string.cancel, null)
                 .create();
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override public void onShow(DialogInterface dialog) { input.requestFocus(); dialogKeyboard(input); }
@@ -233,17 +233,17 @@ public class MainActivity extends Activity {
 
     private void deleteEntry(final File file) {
         new AlertDialog.Builder(this)
-                .setTitle("永久删除")
-                .setMessage("确定永久删除“" + file.getName() + "”吗？此操作无法撤销。")
-                .setPositiveButton("永久删除", new DialogInterface.OnClickListener() {
+                .setTitle(R.string.permanent_delete)
+                .setMessage(getString(R.string.delete_confirm, file.getName()))
+                .setPositiveButton(R.string.permanent_delete, new DialogInterface.OnClickListener() {
                     @Override public void onClick(DialogInterface dialog, int which) {
                         if (!FileUtils.deleteRecursively(file)) {
-                            Toast.makeText(MainActivity.this, "删除失败，文件可能正在使用或目录不可写", Toast.LENGTH_LONG).show();
+                            Toast.makeText(MainActivity.this, R.string.delete_failed_detailed, Toast.LENGTH_LONG).show();
                         }
                         refresh();
                     }
                 })
-                .setNegativeButton("取消", null)
+                .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 
@@ -264,7 +264,7 @@ public class MainActivity extends Activity {
     private void showSelectedEntryActions() {
         int position = listView.getSelectedItemPosition();
         if (position == AdapterView.INVALID_POSITION || position >= adapter.getCount()) {
-            Toast.makeText(this, "请先在文件列表中选择一项", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.select_file_first, Toast.LENGTH_SHORT).show();
             listView.requestFocus();
             if (adapter.getCount() > 0) listView.setSelection(0);
             return;
@@ -272,7 +272,7 @@ public class MainActivity extends Activity {
         final File selected = adapter.getItem(position);
         new AlertDialog.Builder(this)
                 .setTitle(selected.getName())
-                .setItems(new CharSequence[] { "重命名", "删除" }, new DialogInterface.OnClickListener() {
+                .setItems(new CharSequence[] { getString(R.string.rename), getString(R.string.delete) }, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (which == 0) renameEntry(selected);
@@ -299,7 +299,7 @@ public class MainActivity extends Activity {
             if (RemoteKeyPolicy.shouldOpenEntryActions(event.getAction(), keyCode, event.getRepeatCount())) {
                 showSelectedEntryActions();
             }
-            // 同时消费 DOWN 和 UP，防止系统在松键时再次处理该按键。
+            // Consume both DOWN and UP so the system does not handle the key again on release.
             return true;
         }
         if (RemoteKeyPolicy.isConfirmKey(keyCode)) {

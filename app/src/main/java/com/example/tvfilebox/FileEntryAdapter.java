@@ -14,10 +14,12 @@ import java.util.List;
 import java.util.Locale;
 
 final class FileEntryAdapter extends BaseAdapter {
+    private final Context context;
     private final LayoutInflater inflater;
     private List<File> files;
 
     FileEntryAdapter(Context context, List<File> files) {
+        this.context = context;
         this.inflater = LayoutInflater.from(context);
         this.files = files;
     }
@@ -51,7 +53,7 @@ final class FileEntryAdapter extends BaseAdapter {
         holder.name.setText(file.getName());
         String modified = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
                 .format(new Date(file.lastModified()));
-        holder.meta.setText(file.isDirectory() ? "文件夹  ·  " + modified
+        holder.meta.setText(file.isDirectory() ? context.getString(R.string.folder) + "  ·  " + modified
                 : FileUtils.formatSize(file.length()) + "  ·  " + modified);
         return convertView;
     }

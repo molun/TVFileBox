@@ -91,7 +91,7 @@ final class FileUtils {
 
     static void openFile(Context context, File file) {
         if (file == null || !file.exists()) {
-            Toast.makeText(context, "文件不存在", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.file_not_found, Toast.LENGTH_SHORT).show();
             return;
         }
         if (file.isDirectory()) return;
@@ -104,9 +104,9 @@ final class FileUtils {
                     Intent permission = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
                             Uri.parse("package:" + context.getPackageName()));
                     context.startActivity(permission);
-                    Toast.makeText(context, "请允许本应用安装未知来源应用，然后再次打开 APK", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, R.string.allow_unknown_sources_retry, Toast.LENGTH_LONG).show();
                 } catch (Exception e) {
-                    Toast.makeText(context, "请在系统设置中允许安装未知来源应用", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, R.string.allow_unknown_sources_settings, Toast.LENGTH_LONG).show();
                 }
                 return;
             }
@@ -124,7 +124,7 @@ final class FileUtils {
         try {
             context.startActivity(intent);
         } catch (Exception e) {
-            Toast.makeText(context, "没有可打开此文件的应用", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, R.string.no_app_to_open_file, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -141,7 +141,8 @@ final class FileUtils {
         return file.delete();
     }
 
-    static File safeDestination(File directory, String requestedName) throws IOException {
+    static File safeDestination(File directory, String requestedName,
+                                String invalidNameMessage, String duplicateNameMessage) throws IOException {
         String clean = requestedName == null ? "upload.bin" : requestedName.replace('\\', '/');
         clean = new File(clean).getName().trim();
         if (clean.length() == 0 || ".".equals(clean) || "..".equals(clean)) clean = "upload.bin";
@@ -149,7 +150,7 @@ final class FileUtils {
         File candidate = new File(directory, clean);
         String canonicalDir = directory.getCanonicalPath() + File.separator;
         if (!candidate.getCanonicalPath().startsWith(canonicalDir)) {
-            throw new IOException("非法文件名");
+            throw new IOException(invalidNameMessage);
         }
         if (!candidate.exists()) return candidate;
 
@@ -160,7 +161,7 @@ final class FileUtils {
             candidate = new File(directory, base + " (" + i + ")" + extension);
             if (!candidate.exists()) return candidate;
         }
-        throw new IOException("同名文件过多");
+        throw new IOException(duplicateNameMessage);
     }
 
     static void copy(File source, File destination) throws IOException {

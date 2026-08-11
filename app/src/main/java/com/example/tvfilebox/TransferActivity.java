@@ -54,7 +54,7 @@ public class TransferActivity extends Activity implements UploadEntryAdapter.Lis
         listView.setFocusable(false);
 
         uploadDirectory = FileUtils.uploadDirectory(this);
-        pathView.setText("文件保存完整路径：" + uploadDirectory.getAbsolutePath());
+        pathView.setText(getString(R.string.saved_path, uploadDirectory.getAbsolutePath()));
         adapter = new UploadEntryAdapter(this, FileUtils.listUploads(this), this);
         listView.setAdapter(adapter);
     }
@@ -88,7 +88,7 @@ public class TransferActivity extends Activity implements UploadEntryAdapter.Lis
         token = UUID.randomUUID().toString().replace("-", "").substring(0, 12);
         int selectedPort = -1;
         for (int port = 8080; port <= 8090; port++) {
-            EmbeddedHttpServer candidate = new EmbeddedHttpServer(port, uploadDirectory, token, this);
+            EmbeddedHttpServer candidate = new EmbeddedHttpServer(this, port, uploadDirectory, token, this);
             try {
                 candidate.start(5000, false);
                 server = candidate;
@@ -101,26 +101,26 @@ public class TransferActivity extends Activity implements UploadEntryAdapter.Lis
 
         String ip = findLocalIpv4();
         if (server == null) {
-            urlView.setText("HTTP 服务启动失败");
-            statusView.setText("8080–8090 端口均不可用");
+            urlView.setText(R.string.http_start_failed);
+            statusView.setText(R.string.ports_unavailable);
             qrView.setImageDrawable(null);
             return;
         }
         if (ip == null) {
-            urlView.setText("请先连接 Wi-Fi");
-            statusView.setText("服务已启动，但没有找到局域网 IPv4 地址");
+            urlView.setText(R.string.connect_wifi_first);
+            statusView.setText(R.string.no_lan_address);
             qrView.setImageDrawable(null);
             return;
         }
 
         String url = "http://" + ip + ":" + selectedPort + "/?token=" + token;
         urlView.setText(url);
-        statusView.setText("服务运行中 · 仅本页打开期间可访问 · 手机和电视须在同一 Wi-Fi");
+        statusView.setText(R.string.server_running);
         try {
             Bitmap qr = QrCodeUtil.create(url, 420);
             qrView.setImageBitmap(qr);
         } catch (WriterException e) {
-            statusView.setText("服务运行中，但二维码生成失败：" + e.getMessage());
+            statusView.setText(getString(R.string.qr_generation_failed, e.getMessage()));
         }
     }
 
@@ -217,17 +217,17 @@ public class TransferActivity extends Activity implements UploadEntryAdapter.Lis
     @Override
     public void onDelete(final File file) {
         new AlertDialog.Builder(this)
-                .setTitle("永久删除")
-                .setMessage("确定永久删除“" + file.getName() + "”吗？此操作无法撤销。")
-                .setPositiveButton("永久删除", new DialogInterface.OnClickListener() {
+                .setTitle(R.string.permanent_delete)
+                .setMessage(getString(R.string.delete_confirm, file.getName()))
+                .setPositiveButton(R.string.permanent_delete, new DialogInterface.OnClickListener() {
                     @Override public void onClick(DialogInterface dialog, int which) {
                         if (!FileUtils.deleteRecursively(file)) {
-                            Toast.makeText(TransferActivity.this, "删除失败", Toast.LENGTH_LONG).show();
+                            Toast.makeText(TransferActivity.this, R.string.delete_failed, Toast.LENGTH_LONG).show();
                         }
                         refreshFiles(false);
                     }
                 })
-                .setNegativeButton("取消", null)
+                .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 

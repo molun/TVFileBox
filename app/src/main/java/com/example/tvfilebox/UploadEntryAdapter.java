@@ -59,7 +59,7 @@ final class UploadEntryAdapter extends BaseAdapter {
         holder.meta.setText(FileUtils.formatSize(file.length()) + "  ·  " +
                 DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
                         .format(new Date(file.lastModified())));
-        holder.open.setText(apk ? "安装" : "打开");
+        holder.open.setText(apk ? R.string.install : R.string.open);
         holder.open.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) { listener.onOpen(file); }
         });
