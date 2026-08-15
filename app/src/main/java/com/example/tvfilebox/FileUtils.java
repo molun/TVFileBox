@@ -164,6 +164,82 @@ final class FileUtils {
         throw new IOException(duplicateNameMessage);
     }
 
+    static boolean sameFile(File left, File right) {
+        if (left == null || right == null) return false;
+        try {
+            return left.getCanonicalFile().equals(right.getCanonicalFile());
+        } catch (IOException e) {
+            return left.getAbsoluteFile().equals(right.getAbsoluteFile());
+        }
+    }
+
+    static boolean isSameOrDescendant(File ancestor, File candidate) throws IOException {
+        String ancestorPath = ancestor.getCanonicalPath();
+        String candidatePath = candidate.getCanonicalPath();
+        return candidatePath.equals(ancestorPath)
+                || candidatePath.startsWith(ancestorPath + File.separator);
+    }
+
+    static File pasteTargetForSelection(File selected) {
+        if (selected == null) return null;
+        return selected.isDirectory() ? selected : selected.getParentFile();
+    }
+
+    static File paste(File source, File targetDirectory, boolean move) throws IOException {
+        if (source == null || !source.exists()) throw new IOException("Source does not exist");
+        if (targetDirectory == null || !targetDirectory.isDirectory()) {
+            throw new IOException("Invalid target directory");
+        }
+        if (source.isDirectory() && isSameOrDescendant(source, targetDirectory)) {
+            throw new IOException("Target is inside source");
+        }
+
+        File destination = uniqueDestination(targetDirectory, source.getName(), source.isFile());
+        if (move && source.renameTo(destination)) return destination;
+
+        try {
+            copyRecursively(source, destination);
+        } catch (IOException e) {
+            deleteRecursively(destination);
+            throw e;
+        }
+
+        if (move && !deleteRecursively(source)) {
+            throw new IOException("Copied but could not remove source");
+        }
+        return destination;
+    }
+
+    private static File uniqueDestination(File directory, String originalName,
+                                          boolean preserveFileExtension) throws IOException {
+        File candidate = new File(directory, originalName);
+        if (!candidate.exists()) return candidate;
+
+        int dot = preserveFileExtension ? originalName.lastIndexOf('.') : -1;
+        String base = dot > 0 ? originalName.substring(0, dot) : originalName;
+        String extension = dot > 0 ? originalName.substring(dot) : "";
+        for (int i = 1; i < 10000; i++) {
+            candidate = new File(directory, base + " (" + i + ")" + extension);
+            if (!candidate.exists()) return candidate;
+        }
+        throw new IOException("Too many duplicate names");
+    }
+
+    private static void copyRecursively(File source, File destination) throws IOException {
+        if (source.isDirectory()) {
+            if (!destination.mkdir()) throw new IOException("Could not create destination directory");
+            File[] children = source.listFiles();
+            if (children == null) throw new IOException("Could not read source directory");
+            for (File child : children) {
+                copyRecursively(child, new File(destination, child.getName()));
+            }
+            destination.setLastModified(source.lastModified());
+        } else {
+            copy(source, destination);
+            destination.setLastModified(source.lastModified());
+        }
+    }
+
     static void copy(File source, File destination) throws IOException {
         FileInputStream input = new FileInputStream(source);
         FileOutputStream output = new FileOutputStream(destination);

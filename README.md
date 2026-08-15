@@ -14,7 +14,9 @@ The interface follows the Android system language. Chinese system locales use Si
 - Press the remote Back key to move to the parent directory.
 - Press OK/Enter to open a file or enter a folder.
 - Long-press OK/Enter, or long-press a row on a touchscreen, to delete a file or folder after a confirmation dialog.
-- Press the remote Settings/Menu key to open the focused row's Rename/Delete menu.
+- Press the remote Settings/Menu key to open the focused row's action menu.
+- The Settings/Menu dialog also supports Copy and Cut. Paste appears only after an item has been copied or cut.
+- Pasting while a folder is selected places the item inside that folder; pasting while a file is selected uses the file's parent folder.
 - Open APK files with Android's system package installer.
 - Open Remote Transfer to display a QR code and receive files from a phone browser on the same local network.
 - Show upload progress, exact storage path, uploaded-file history, and Open/Delete actions.
@@ -27,17 +29,28 @@ The interface follows the Android system language. Chinese system locales use Si
 | Move through files | D-pad Up/Down |
 | Open file / enter folder | OK, D-pad Center, or Enter |
 | Delete selected item | Long-press OK, D-pad Center, or Enter |
-| Rename/Delete menu | Settings or Menu |
+| Copy/Cut/Paste/Rename/Delete menu | Settings or Menu |
 | Parent directory | Back |
 | Initial directory | Home button in the app toolbar |
 
 All delete operations display a second confirmation dialog and are permanent.
 
+## Copy, cut, and paste
+
+1. Focus the source file or folder and press the remote Settings/Menu key.
+2. Choose **Copy** or **Cut**.
+3. Navigate to the destination and focus an item:
+   - If a folder is focused, Paste places the source inside that folder.
+   - If a file is focused, Paste places the source beside that file in its parent folder.
+4. Press Settings/Menu again and choose **Paste**.
+
+Paste is hidden until a source has been copied or cut. A copied source remains available for repeated pastes; a cut source is cleared after a successful move. Folders are copied recursively, duplicate names receive a suffix such as `(1)`, and TVFileBox blocks attempts to paste a folder into itself or one of its descendants.
+
 ## APK selection
 
-- `TVFileBox-v1.2.4-armeabi-v7a.apk`: 32-bit ARM TV boxes.
-- `TVFileBox-v1.2.4-arm64-v8a.apk`: 64-bit ARM devices.
-- `TVFileBox-v1.2.4-universal.apk`: universal build for general installation.
+- `TVFileBox-v1.2.5-armeabi-v7a.apk`: 32-bit ARM TV boxes.
+- `TVFileBox-v1.2.5-arm64-v8a.apk`: 64-bit ARM devices.
+- `TVFileBox-v1.2.5-universal.apk`: universal build for general installation.
 
 TVFileBox currently contains no native `.so` libraries, so the three requested ABI-labeled APKs are byte-identical and compatible with both ARMv7 and ARM64. The universal file is recommended for most users.
 

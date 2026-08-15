@@ -21,6 +21,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends Activity {
     private static final int STORAGE_PERMISSION_REQUEST = 100;
@@ -30,6 +33,8 @@ public class MainActivity extends Activity {
     private FileEntryAdapter adapter;
     private File initialDirectory;
     private File currentDirectory;
+    private File clipboardFile;
+    private boolean clipboardCut;
     private View selectedRowView;
     private boolean confirmLongPressHandled;
 
@@ -219,6 +224,8 @@ public class MainActivity extends Activity {
                             Toast.makeText(MainActivity.this, R.string.file_exists, Toast.LENGTH_SHORT).show();
                         } else if (!file.renameTo(destination)) {
                             Toast.makeText(MainActivity.this, R.string.rename_failed, Toast.LENGTH_SHORT).show();
+                        } else if (FileUtils.sameFile(clipboardFile, file)) {
+                            clipboardFile = destination;
                         }
                         refresh();
                     }
@@ -239,6 +246,8 @@ public class MainActivity extends Activity {
                     @Override public void onClick(DialogInterface dialog, int which) {
                         if (!FileUtils.deleteRecursively(file)) {
                             Toast.makeText(MainActivity.this, R.string.delete_failed_detailed, Toast.LENGTH_LONG).show();
+                        } else if (FileUtils.sameFile(clipboardFile, file)) {
+                            clearClipboard();
                         }
                         refresh();
                     }
@@ -261,6 +270,47 @@ public class MainActivity extends Activity {
         startActivity(new Intent(this, TransferActivity.class));
     }
 
+    private void putOnClipboard(File file, boolean cut) {
+        clipboardFile = file;
+        clipboardCut = cut;
+        Toast.makeText(this, getString(cut ? R.string.cut_to_clipboard : R.string.copied_to_clipboard,
+                file.getName()), Toast.LENGTH_SHORT).show();
+    }
+
+    private void clearClipboard() {
+        clipboardFile = null;
+        clipboardCut = false;
+    }
+
+    private void pasteClipboard(File selected) {
+        if (clipboardFile == null || !clipboardFile.exists()) {
+            clearClipboard();
+            Toast.makeText(this, R.string.clipboard_source_missing, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        File targetDirectory = FileUtils.pasteTargetForSelection(selected);
+        if (clipboardCut && FileUtils.sameFile(clipboardFile.getParentFile(), targetDirectory)) {
+            Toast.makeText(this, R.string.cut_same_folder, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        try {
+            if (clipboardFile.isDirectory()
+                    && FileUtils.isSameOrDescendant(clipboardFile, targetDirectory)) {
+                Toast.makeText(this, R.string.cannot_paste_into_itself, Toast.LENGTH_LONG).show();
+                return;
+            }
+            FileUtils.paste(clipboardFile, targetDirectory, clipboardCut);
+            if (clipboardCut) clearClipboard();
+            Toast.makeText(this, getString(R.string.paste_success,
+                    targetDirectory.getAbsolutePath()), Toast.LENGTH_SHORT).show();
+            refresh();
+        } catch (IOException e) {
+            Toast.makeText(this, R.string.paste_failed, Toast.LENGTH_LONG).show();
+        }
+    }
+
     private void showSelectedEntryActions() {
         int position = listView.getSelectedItemPosition();
         if (position == AdapterView.INVALID_POSITION || position >= adapter.getCount()) {
@@ -270,12 +320,25 @@ public class MainActivity extends Activity {
             return;
         }
         final File selected = adapter.getItem(position);
+        if (clipboardFile != null && !clipboardFile.exists()) clearClipboard();
+        final List<Integer> actions = new ArrayList<Integer>();
+        actions.add(R.string.copy);
+        actions.add(R.string.cut);
+        if (clipboardFile != null) actions.add(R.string.paste);
+        actions.add(R.string.rename);
+        actions.add(R.string.delete);
+        CharSequence[] labels = new CharSequence[actions.size()];
+        for (int i = 0; i < actions.size(); i++) labels[i] = getString(actions.get(i));
         new AlertDialog.Builder(this)
                 .setTitle(selected.getName())
-                .setItems(new CharSequence[] { getString(R.string.rename), getString(R.string.delete) }, new DialogInterface.OnClickListener() {
+                .setItems(labels, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (which == 0) renameEntry(selected);
+                        int action = actions.get(which);
+                        if (action == R.string.copy) putOnClipboard(selected, false);
+                        else if (action == R.string.cut) putOnClipboard(selected, true);
+                        else if (action == R.string.paste) pasteClipboard(selected);
+                        else if (action == R.string.rename) renameEntry(selected);
                         else deleteEntry(selected);
                     }
                 })

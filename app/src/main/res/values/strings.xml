@@ -9,12 +9,15 @@
     <string name="install">Install</string>
     <string name="rename">Rename</string>
     <string name="delete">Delete</string>
+    <string name="copy">Copy</string>
+    <string name="cut">Cut</string>
+    <string name="paste">Paste</string>
     <string name="cancel">Cancel</string>
     <string name="confirm">OK</string>
     <string name="create">Create</string>
     <string name="folder">Folder</string>
     <string name="empty_directory">This folder is empty</string>
-    <string name="settings_key_hint">Settings key: rename or permanently delete the selected file</string>
+    <string name="settings_key_hint">Settings key: copy, cut, paste, rename, or permanently delete the selected file/folder</string>
     <string name="transfer_heading">Upload files from your phone to the TV</string>
     <string name="upload_qr_description">QR code for the upload address</string>
 
@@ -35,6 +38,13 @@
     <string name="delete_failed">Delete failed</string>
     <string name="delete_failed_detailed">Delete failed. The file may be in use or the folder may be read-only.</string>
     <string name="select_file_first">Select an item in the file list first</string>
+    <string name="copied_to_clipboard">Ready to copy: %1$s</string>
+    <string name="cut_to_clipboard">Ready to move: %1$s</string>
+    <string name="paste_success">Pasted into: %1$s</string>
+    <string name="paste_failed">Paste failed. Check the available space and folder permissions.</string>
+    <string name="clipboard_source_missing">The copied or cut item no longer exists</string>
+    <string name="cannot_paste_into_itself">A folder cannot be pasted into itself or one of its subfolders</string>
+    <string name="cut_same_folder">The item is already in this folder</string>
 
     <string name="file_not_found">File not found</string>
     <string name="allow_unknown_sources_retry">Allow TV FileBox to install unknown apps, then open the APK again</string>

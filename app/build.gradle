@@ -10,8 +10,8 @@ android {
         applicationId 'com.example.tvfilebox'
         minSdk 14
         targetSdk 28
-        versionCode 8
-        versionName '1.2.4'
+        versionCode 9
+        versionName '1.2.5'
     }
 
     buildTypes {

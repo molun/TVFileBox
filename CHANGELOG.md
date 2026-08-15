@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.5
+
+- Added Copy, Cut, and conditional Paste actions to the remote Settings/Menu dialog.
+- Pasting on a selected folder places the item inside that folder; pasting on a selected file uses the file's parent folder.
+- Paste is hidden until an item has been copied or cut.
+- Added recursive folder copying, cross-folder moves, automatic duplicate-name handling, and protection against copying a folder into itself.
+
 ## 1.2.4
 
 - Added complete English UI resources while retaining the Simplified Chinese interface.
